@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pickdb}
+    username: ${DB_USER:pickuser}
+    password: ${DB_PASSWORD:pickpass}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
