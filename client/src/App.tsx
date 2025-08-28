@@ -1,4 +1,5 @@
-import PickPathDemo from "./components/PickpathDemo";
+import PickPathDemo from "./components/PickPathDemo";
+
 export default function App() {
   return <PickPathDemo />;
 }
