@@ -10,18 +10,17 @@ type Stop = {
 };
 type Resp = { orderedStops: Stop[]; totalDistance: number; strategy: string };
 
-interface ImportMetaEnv {
-  readonly VITE_PICK_API?: string;
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv extends Readonly<Record<string, string>> {
+  readonly VITE_PICK_API: string;
 }
 
-declare global {
-  interface ImportMeta {
-    readonly env: ImportMetaEnv;
-  }
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }
 
-const API =
-  (import.meta as ImportMeta).env.VITE_PICK_API ?? "http://localhost:8080";
+const API = import.meta.env.VITE_PICK_API ?? "http://localhost:8080";
 
 export default function PickPathDemo() {
   const [skus, setSkus] = useState("SKU-APPLE, SKU-RICE, SKU-MILK, SKU-BREAD");

@@ -20,8 +20,3 @@ Run tests
 cd server
 mvn test
 ```
-
-Notes
-
-- The backend requires Java 21 because the code uses modern Java language features (local-variable type inference `var`, `String.formatted()`, etc.).
-- I ran `mvn test` locally and the test suite passed (1 test).
