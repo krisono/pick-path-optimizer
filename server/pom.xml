@@ -66,6 +66,13 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Annotation Processor -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
   <build>
@@ -79,9 +86,22 @@
           <configuration>
             <release>${java.version}</release>
             <compilerArgs>
-              <arg>-Xlint:all</arg>
+              <arg>-Xlint:all,-processing</arg>
               <arg>-parameters</arg>
             </compilerArgs>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+              </path>
+              <path>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-jpamodelgen</artifactId>
+                <version>6.4.4.Final</version>
+              </path>
+            </annotationProcessorPaths>
+            <compilerArgument>-proc:none</compilerArgument>
           </configuration>
         </plugin>
         <plugin>
