@@ -1,0 +1,5 @@
+package.json.backup
+server/
+*.md
+!README.md
+.DS_Store
