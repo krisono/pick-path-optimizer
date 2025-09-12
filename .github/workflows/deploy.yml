@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
-        
+
 
       # Pull environment variables and project settings
       - name: Pull Vercel environment
