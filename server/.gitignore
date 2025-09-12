@@ -2,3 +2,6 @@ target
 *.log
 *.iml
 .mvn
+
+*.md
+!README.md

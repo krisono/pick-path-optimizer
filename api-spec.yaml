@@ -1,0 +1,582 @@
+openapi: 3.0.3
+info:
+  title: Advanced Pick-Path Optimizer API
+  description: Production-ready warehouse pick-path optimization with multi-picker support, constraints, and rich analytics
+  version: 2.0.0
+  contact:
+    name: Pick-Path API Support
+    email: support@pickpath.io
+
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+  - url: https://api.pickpath.io/v2
+    description: Production server
+
+paths:
+  /optimize:
+    post:
+      summary: Optimize pick path for given SKUs
+      description: Generate optimized pick routes with warehouse-aware constraints
+      tags:
+        - Route Optimization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OptimizeRequest"
+            examples:
+              basic:
+                summary: Basic optimization
+                value:
+                  skus: ["SKU-APPLE", "SKU-RICE", "SKU-MILK"]
+                  strategy: "enhanced_two_opt"
+              advanced:
+                summary: With constraints
+                value:
+                  skus: ["SKU-APPLE", "SKU-RICE", "SKU-MILK", "SKU-BREAD"]
+                  startLocationCode: "DOCK-01"
+                  endLocationCode: "PACK-STATION-01"
+                  strategy: "grasp"
+                  constraints:
+                    maxCapacity: 25
+                    maxTimeMinutes: 60
+                    avoidBlockedZones: true
+                  weights:
+                    distanceWeight: 1.0
+                    aisleCrossingPenalty: 5.0
+                    turnPenalty: 2.0
+      responses:
+        "200":
+          description: Optimized route generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptimizeResponse"
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: SKU or location not found
+
+  /optimize/batch:
+    post:
+      summary: Optimize multiple orders with picker assignment
+      description: Multi-picker optimization with order batching
+      tags:
+        - Route Optimization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatchOptimizeRequest"
+      responses:
+        "200":
+          description: Batch optimization completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchOptimizeResponse"
+
+  /layout:
+    get:
+      summary: Get warehouse layout
+      description: Retrieve current warehouse layout with aisles, zones, and blocked areas
+      tags:
+        - Layout Management
+      parameters:
+        - name: includeMetrics
+          in: query
+          description: Include usage metrics and heatmap data
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Layout retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LayoutResponse"
+
+    post:
+      summary: Update warehouse layout
+      description: Upload or modify warehouse layout configuration
+      tags:
+        - Layout Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LayoutUpdateRequest"
+      responses:
+        "200":
+          description: Layout updated successfully
+        "400":
+          description: Invalid layout configuration
+
+  /analytics/metrics:
+    get:
+      summary: Get route performance metrics
+      description: Historical analytics and performance benchmarks
+      tags:
+        - Analytics
+      parameters:
+        - name: timeRange
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: day
+        - name: pickerId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricsResponse"
+
+  /analytics/compare:
+    post:
+      summary: Compare routing strategies
+      description: Side-by-side comparison of different algorithms or human vs optimizer
+      tags:
+        - Analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompareRequest"
+      responses:
+        "200":
+          description: Comparison results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompareResponse"
+
+components:
+  schemas:
+    OptimizeRequest:
+      type: object
+      required:
+        - skus
+      properties:
+        skus:
+          type: array
+          items:
+            type: string
+          example: ["SKU-APPLE", "SKU-RICE", "SKU-MILK"]
+        startLocationCode:
+          type: string
+          example: "DOCK-01"
+        endLocationCode:
+          type: string
+          example: "PACK-STATION-01"
+        strategy:
+          type: string
+          enum: [nearest_neighbor, enhanced_two_opt, or_opt, grasp, savings]
+          default: enhanced_two_opt
+        constraints:
+          $ref: "#/components/schemas/RouteConstraints"
+        weights:
+          $ref: "#/components/schemas/CostWeights"
+        pickerId:
+          type: string
+          description: Specific picker assignment
+
+    RouteConstraints:
+      type: object
+      properties:
+        maxCapacity:
+          type: integer
+          minimum: 1
+          description: Maximum items per cart
+        maxTimeMinutes:
+          type: integer
+          minimum: 1
+          description: Maximum picking time
+        avoidBlockedZones:
+          type: boolean
+          default: true
+        allowAisleCrossing:
+          type: boolean
+          default: true
+        timeWindows:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeWindow"
+
+    CostWeights:
+      type: object
+      properties:
+        distanceWeight:
+          type: number
+          minimum: 0
+          default: 1.0
+        aisleCrossingPenalty:
+          type: number
+          minimum: 0
+          default: 5.0
+        turnPenalty:
+          type: number
+          minimum: 0
+          default: 2.0
+        blockedZonePenalty:
+          type: number
+          minimum: 0
+          default: 100.0
+        capacityViolationPenalty:
+          type: number
+          minimum: 0
+          default: 50.0
+
+    TimeWindow:
+      type: object
+      properties:
+        locationCode:
+          type: string
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+
+    OptimizeResponse:
+      type: object
+      properties:
+        orderedStops:
+          type: array
+          items:
+            $ref: "#/components/schemas/RouteStop"
+        totalDistance:
+          type: number
+        totalTime:
+          type: number
+          description: Estimated time in minutes
+        strategy:
+          type: string
+        metrics:
+          $ref: "#/components/schemas/RouteMetrics"
+        alternatives:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlternativeRoute"
+
+    RouteStop:
+      type: object
+      properties:
+        sequence:
+          type: integer
+        locationCode:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        x:
+          type: integer
+        y:
+          type: integer
+        legDistance:
+          type: number
+        cumulativeDistance:
+          type: number
+        estimatedTime:
+          type: number
+        actions:
+          type: array
+          items:
+            type: string
+            enum: [pick, drop, scan, verify]
+        zoneTransitions:
+          type: array
+          items:
+            type: string
+        aisleCrossings:
+          type: integer
+        turns:
+          type: integer
+
+    RouteMetrics:
+      type: object
+      properties:
+        totalDistance:
+          type: number
+        totalTime:
+          type: number
+        aisleCrossings:
+          type: integer
+        totalTurns:
+          type: integer
+        zoneTransitions:
+          type: integer
+        efficiencyScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        comparedToOptimal:
+          type: number
+          description: Percentage vs theoretical optimal
+
+    BatchOptimizeRequest:
+      type: object
+      required:
+        - orders
+        - pickers
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+        pickers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Picker"
+        strategy:
+          type: string
+          default: "multi_picker_cvrp"
+        globalConstraints:
+          $ref: "#/components/schemas/RouteConstraints"
+
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: string
+        skus:
+          type: array
+          items:
+            type: string
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+        timeWindow:
+          $ref: "#/components/schemas/TimeWindow"
+
+    Picker:
+      type: object
+      properties:
+        pickerId:
+          type: string
+        name:
+          type: string
+        capacity:
+          type: integer
+        startLocation:
+          type: string
+        endLocation:
+          type: string
+        shiftStart:
+          type: string
+          format: time
+        shiftEnd:
+          type: string
+          format: time
+
+    BatchOptimizeResponse:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PickerAssignment"
+        totalDistance:
+          type: number
+        totalTime:
+          type: number
+        utilizationMetrics:
+          $ref: "#/components/schemas/UtilizationMetrics"
+
+    PickerAssignment:
+      type: object
+      properties:
+        pickerId:
+          type: string
+        orders:
+          type: array
+          items:
+            type: string
+        route:
+          type: array
+          items:
+            $ref: "#/components/schemas/RouteStop"
+        metrics:
+          $ref: "#/components/schemas/RouteMetrics"
+
+    LayoutResponse:
+      type: object
+      properties:
+        dimensions:
+          $ref: "#/components/schemas/LayoutDimensions"
+        aisles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Aisle"
+        zones:
+          type: array
+          items:
+            $ref: "#/components/schemas/Zone"
+        blockedAreas:
+          type: array
+          items:
+            $ref: "#/components/schemas/BlockedArea"
+        locations:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationDetail"
+        heatmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapPoint"
+
+    LayoutDimensions:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        gridSize:
+          type: number
+          default: 1.0
+
+    Aisle:
+      type: object
+      properties:
+        aisleId:
+          type: string
+        startX:
+          type: integer
+        startY:
+          type: integer
+        endX:
+          type: integer
+        endY:
+          type: integer
+        direction:
+          type: string
+          enum:
+            [
+              bidirectional,
+              north_to_south,
+              south_to_north,
+              east_to_west,
+              west_to_east,
+            ]
+        width:
+          type: number
+
+    Zone:
+      type: object
+      properties:
+        zoneId:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [picking, packing, receiving, shipping, staging]
+        boundaries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Point"
+        accessPoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Point"
+
+    BlockedArea:
+      type: object
+      properties:
+        areaId:
+          type: string
+        reason:
+          type: string
+        boundaries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Point"
+        temporaryUntil:
+          type: string
+          format: date-time
+          nullable: true
+
+    Point:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+
+    LocationDetail:
+      type: object
+      properties:
+        locationCode:
+          type: string
+        x:
+          type: integer
+        y:
+          type: integer
+        zone:
+          type: string
+        aisle:
+          type: string
+        bay:
+          type: string
+        level:
+          type: string
+        capacity:
+          type: integer
+        currentOccupancy:
+          type: integer
+        accessibility:
+          type: string
+          enum: [full, restricted, blocked]
+
+    HeatmapPoint:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        frequency:
+          type: number
+        averageTime:
+          type: number
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        details:
+          type: object
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - ApiKeyAuth: []

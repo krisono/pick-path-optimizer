@@ -64,15 +64,31 @@ public class Location {
         return zone;
     }
 
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
     public String getAisle() {
         return aisle;
+    }
+
+    public void setAisle(String aisle) {
+        this.aisle = aisle;
     }
 
     public String getBay() {
         return bay;
     }
 
+    public void setBay(String bay) {
+        this.bay = bay;
+    }
+
     public String getLevel() {
         return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }
