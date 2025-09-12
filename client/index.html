@@ -1,12 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pick-Path Demo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Pick Path Optimizer - Optimize warehouse picking routes with advanced algorithms. Reduce travel time and increase efficiency."
+    />
+    <meta
+      name="keywords"
+      content="warehouse optimization, route planning, logistics, supply chain"
+    />
+    <meta name="author" content="Nnaemeka Onochie" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Pick Path Optimizer" />
+    <meta
+      property="og:description"
+      content="Optimize warehouse picking routes with advanced algorithms"
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Theme & Performance -->
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>Pick Path Optimizer | Warehouse Route Optimization</title>
+
+    <!-- Critical CSS -->
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          sans-serif;
+        line-height: 1.6;
+        color: #374151;
+        background-color: #f9fafb;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: #2563eb;
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        z-index: 1000;
+        border-radius: 4px;
+      }
+
+      .skip-link:focus {
+        top: 6px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
   </head>
   <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <div id="root"></div>
+    <main id="main-content" style="display: none"></main>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

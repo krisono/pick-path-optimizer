@@ -1,6 +1,6 @@
 import "./App.css";
-import RouteOptimizer from "./components/RouteOptimizer";
+import RouteOptimizerNew from "./components/RouteOptimizerNew";
 
 export default function App() {
-  return <RouteOptimizer />;
+  return <RouteOptimizerNew />;
 }

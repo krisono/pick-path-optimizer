@@ -28,6 +28,8 @@ interface ControlsPanelProps {
   setStartLocation: (location: string) => void;
   endLocation: string;
   setEndLocation: (location: string) => void;
+  isMobile?: boolean;
+  onStopHover?: (stopIndex: number | null) => void;
   onOptimize: () => void;
   loading: boolean;
 }
@@ -47,6 +49,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   setEndLocation,
   onOptimize,
   loading,
+  isMobile = false,
+  onStopHover,
 }) => {
   const strategies = [
     {

@@ -21,7 +21,9 @@ interface WarehouseMapProps {
   width?: number;
   height?: number;
   showAnimation?: boolean;
-  highlightedStop?: number;
+  highlightedStop?: number | null;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const WarehouseMap: React.FC<WarehouseMapProps> = ({
@@ -30,6 +32,8 @@ const WarehouseMap: React.FC<WarehouseMapProps> = ({
   height = 600,
   showAnimation = true,
   highlightedStop,
+  className = "",
+  style = {},
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -182,34 +186,15 @@ const WarehouseMap: React.FC<WarehouseMapProps> = ({
 
   return (
     <div
-      style={{
-        position: "relative",
-        background: "white",
-        borderRadius: "8px",
-        padding: "16px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}
+      className={`relative bg-white rounded-lg p-4 shadow-sm ${className}`}
+      style={style}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-        }}
-      >
-        <h3
-          style={{
-            margin: 0,
-            fontSize: "18px",
-            fontWeight: "600",
-            color: "#1f2937",
-          }}
-        >
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 m-0">
           Warehouse Layout & Route
         </h3>
         {routeData && (
-          <div style={{ fontSize: "14px", color: "#6b7280" }}>
+          <div className="text-sm text-gray-600">
             Strategy: {routeData.strategy} | Distance:{" "}
             {routeData.totalDistance.toFixed(1)} units
           </div>
@@ -218,15 +203,18 @@ const WarehouseMap: React.FC<WarehouseMapProps> = ({
 
       <svg
         ref={svgRef}
-        width={width}
-        height={height}
+        width="100%"
+        height="400"
         viewBox={`${viewBox.minX} ${viewBox.minY} ${
           viewBox.maxX - viewBox.minX
         } ${viewBox.maxY - viewBox.minY}`}
+        className="border border-gray-200 rounded bg-gray-50 touch-pan-x touch-pan-y w-full"
         style={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "4px",
-          background: "#f9fafb",
+          minHeight: "300px",
+          maxHeight: "600px",
+          aspectRatio: `${viewBox.maxX - viewBox.minX} / ${
+            viewBox.maxY - viewBox.minY
+          }`,
         }}
       >
         {/* Grid lines */}

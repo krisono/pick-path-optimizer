@@ -21,6 +21,7 @@ interface MetricsPanelProps {
   onStopHighlight?: (stopIndex: number | null) => void;
   onExportCsv?: () => void;
   onExportPng?: () => void;
+  isMobile?: boolean;
 }
 
 const MetricsPanel: React.FC<MetricsPanelProps> = ({
@@ -28,6 +29,7 @@ const MetricsPanel: React.FC<MetricsPanelProps> = ({
   onStopHighlight,
   onExportCsv,
   onExportPng,
+  isMobile = false,
 }) => {
   const [activeTab, setActiveTab] = useState<"overview" | "details">(
     "overview"
