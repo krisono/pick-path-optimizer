@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "cd client && npm run build",
-    "dev": "cd client && npm run dev",
-    "install-client": "cd client && npm install"
+    "dev": "cd client && npm run dev"
   },
   "dependencies": {
     "react": "^19.1.1",
