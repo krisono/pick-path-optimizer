@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd client && npm ci && npm run vercel-build",
-  "outputDirectory": "client/dist"
-}
