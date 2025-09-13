@@ -1,6 +1,6 @@
 import "./App.css";
-import RouteOptimizerNew from "./components/RouteOptimizerNew";
+import PickPathOptimizerApp from "./components/PickPathOptimizerApp";
 
 export default function App() {
-  return <RouteOptimizerNew />;
+  return <PickPathOptimizerApp />;
 }
