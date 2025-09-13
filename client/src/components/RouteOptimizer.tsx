@@ -8,7 +8,7 @@ import {
   BASE,
 } from "../lib/api";
 import { Button, Banner, Field, Select, Card } from "./ui";
-import { TopNav, SideNav, BottomNav } from "./Navigation";
+import { TopNav, SideNav, BottomNav } from "./NavigationNew";
 import WarehouseMap from "./WarehouseMap";
 import MetricsPanel from "./MetricsPanel";
 import ControlsPanel from "./ControlsPanel";

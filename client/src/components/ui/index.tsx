@@ -2,14 +2,25 @@ import React, { forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Button Component
-export const Button = forwardRef((props, ref) => {
-  const { variant = "primary", size = "md", loading, fullWidth, icon, children, className = "", ...rest } = props;
-  
-  const baseClasses = "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-  
+export const Button = forwardRef<HTMLButtonElement, any>((props, ref) => {
+  const {
+    variant = "primary",
+    size = "md",
+    loading,
+    fullWidth,
+    icon,
+    children,
+    className = "",
+    ...rest
+  } = props;
+
+  const baseClasses =
+    "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
   const variantClasses = {
     primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
+    secondary:
+      "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
     ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
   };
 
@@ -24,12 +35,16 @@ export const Button = forwardRef((props, ref) => {
     variantClasses[variant],
     sizeClasses[size],
     fullWidth ? "w-full" : "",
-    className
-  ].filter(Boolean).join(" ");
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <button ref={ref} className={classes} disabled={loading} {...rest}>
-      {loading && <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2" />}
+      {loading && (
+        <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2" />
+      )}
       {icon && !loading && <span>{icon}</span>}
       {children}
     </button>
@@ -39,17 +54,26 @@ export const Button = forwardRef((props, ref) => {
 Button.displayName = "Button";
 
 // Card Component
-export const Card = ({ children, className = "", padding = "md" }) => {
+export const Card = ({ children, className = "", padding = "md" }: any) => {
   const paddingClass = padding === "none" ? "" : "p-4";
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 shadow-sm ${paddingClass} ${className}`}>
+    <div
+      className={`bg-white rounded-lg border border-gray-200 shadow-sm ${paddingClass} ${className}`}
+    >
       {children}
     </div>
   );
 };
 
 // Banner Component
-export const Banner = ({ variant, title, children, dismissible, onDismiss, actions }) => {
+export const Banner = ({
+  variant,
+  title,
+  children,
+  dismissible,
+  onDismiss,
+  actions,
+}: any) => {
   const variantClasses = {
     success: "bg-green-50 border-green-200 text-green-800",
     error: "bg-red-50 border-red-200 text-red-800",
@@ -67,7 +91,10 @@ export const Banner = ({ variant, title, children, dismissible, onDismiss, actio
         <div className="flex items-center gap-2 ml-4">
           {actions}
           {dismissible && (
-            <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600">
+            <button
+              onClick={onDismiss}
+              className="text-gray-400 hover:text-gray-600"
+            >
               ×
             </button>
           )}
@@ -78,7 +105,7 @@ export const Banner = ({ variant, title, children, dismissible, onDismiss, actio
 };
 
 // Field Component
-export const Field = forwardRef((props, ref) => {
+export const Field = forwardRef<HTMLInputElement, any>((props, ref) => {
   const { label, hint, error, className = "", ...rest } = props;
   return (
     <div className="space-y-1">
@@ -102,8 +129,42 @@ export const Field = forwardRef((props, ref) => {
 
 Field.displayName = "Field";
 
+// Select Component
+export const Select = ({
+  label,
+  hint,
+  error,
+  options = [],
+  className = "",
+  ...rest
+}: any) => {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <select
+        className={`block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+          error ? "border-red-500" : ""
+        } ${className}`}
+        {...rest}
+      >
+        {options.map((option: any, index: number) => (
+          <option key={option.value || index} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {hint && !error && <p className="text-xs text-gray-500">{hint}</p>}
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
+  );
+};
+
 // EmptyState Component
-export const EmptyState = ({ icon, title, description, action }) => (
+export const EmptyState = ({ icon, title, description, action }: any) => (
   <div className="text-center py-12 px-4">
     {icon && (
       <div className="mx-auto w-12 h-12 flex items-center justify-center text-gray-400 mb-4">
@@ -111,13 +172,15 @@ export const EmptyState = ({ icon, title, description, action }) => (
       </div>
     )}
     <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-    {description && <p className="text-gray-600 max-w-md mx-auto mb-6">{description}</p>}
+    {description && (
+      <p className="text-gray-600 max-w-md mx-auto mb-6">{description}</p>
+    )}
     {action && action}
   </div>
 );
 
 // BottomSheet Component
-export const BottomSheet = ({ isOpen, onClose, title, children }) => {
+export const BottomSheet = ({ isOpen, onClose, title, children }: any) => {
   return (
     <AnimatePresence>
       {isOpen && (
